@@ -1,5 +1,8 @@
 <template>
     <Breadcrumb class="layout-breadcrumb">
+        <div class="collapsedIcon" @click="toggleCollapsed">
+            <Icon :type="IconType" />
+        </div>
         <BreadcrumbItem v-for="(item,i) in breadcrumbItems" :key="i">
           {{item}}
         </BreadcrumbItem>
@@ -7,6 +10,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import siderConfig from "@/configs/siderConfig";
 export default {
   name: "layout-breadcrumb",
@@ -14,26 +18,42 @@ export default {
     breadcrumbItems() {
       const arrItems = ["首页"];
       const path = this.$route.path.replace("/", "");
-      const hash = this.$route.hash.replace("#", "");
-      if (hash && siderConfig[hash - 1] && siderConfig[hash - 1]["title"]) {
-        arrItems.push(siderConfig[hash - 1]["title"]);
-        if (path && siderConfig[hash - 1]["item"]) {
-          siderConfig[hash - 1]["item"].map(_val => {
-            if (path == _val["pathName"]) {
-              arrItems.push(_val["title"]);
-            }
-          });
-        }
-      }
+      siderConfig.map(config => {
+        config.item.map(val => {
+          if (val.pathName == path) {
+            arrItems.push(config.title, val.title);
+          }
+        });
+      });
       return arrItems;
-    }
+    },
+    IconType() {
+      return this.isCollapsed ? "md-list" : "md-menu";
+    },
+    ...mapState(["isCollapsed"])
+  },
+  methods: {
+    ...mapActions(["toggleCollapsed"])
   }
 };
 </script>
 
 <style lang="less" scoped>
 .layout-breadcrumb {
-  margin: 24px 0;
+  height: 60px;
+  line-height: 60px;
+  position: relative;
+  .collapsedIcon {
+    position: absolute;
+    width: 100px;
+    cursor: pointer;
+    i {
+      transform: translateX(5px);
+      transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+      vertical-align: middle;
+      font-size: 22px;
+    }
+  }
 }
 </style>
 

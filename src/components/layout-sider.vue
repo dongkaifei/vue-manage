@@ -1,22 +1,28 @@
 <template>
-    <Menu :active-name="activeName" theme="light" width="auto" :open-names="[`${openNames}`]" :class="menuClass">
-        <MenuItem name="" to='/'>
-            <Icon type="md-desktop" />
-            <span>首页看板</span>
-        </MenuItem>
-        <Submenu v-for="(item,i) in siderConfig" :key="i" :name="i+1+''">
-            <template slot="title">
-                <Icon :type="item['iconType']" />
-                <span>{{item['title']}}</span>
-            </template>
-            <MenuItem v-for="(val,j) in item['item']" :key="j" :name="val['pathName']" :to="`/${val['pathName']}#${i+1}`">
-                <span>{{val['title']}}</span>
-            </MenuItem>
-        </Submenu>
-    </Menu>
+    <div>
+      <Menu :active-name="activeName" theme="light" width="auto" :open-names="[`${openNames}`]" class="layout-sider-menu" v-if="!isCollapsed">
+          <MenuItem name="" to='/'>
+              <Icon type="md-desktop" />
+              <span>首页看板</span>
+          </MenuItem>
+          <Submenu v-for="(config,i) in siderConfig" :key="i" :name="config.title">
+              <template slot="title">
+                  <Icon :type="config.iconType" />
+                  <span>{{config.title}}</span>
+              </template>
+              <MenuItem v-for="(val,j) in config.item" :key="j" :name="val.pathName" :to="`/${val.pathName}`">
+                  <span>{{val.title}}</span>
+              </MenuItem>
+          </Submenu>
+      </Menu>
+      <Menu theme="light" width="auto" class="collapsed-menu" v-else>
+          
+      </Menu>
+    </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import siderConfig from "@/configs/siderConfig";
 export default {
   name: "layout-sider",
@@ -30,12 +36,18 @@ export default {
       return this.$route.path.replace("/", "");
     },
     openNames() {
-      return this.$route.hash.replace("#", "");
+      let openNames = "";
+      const activeName = this.$route.path.replace("/", "");
+      siderConfig.map(config => {
+        config.item.map(val => {
+          if (val.pathName == activeName) {
+            openNames = config.title;
+          }
+        });
+      });
+      return openNames;
     },
-    menuClass() {
-      return "layout-sider-menu";
-      //return "collapsed-menu";
-    }
+    ...mapState(["isCollapsed"])
   }
 };
 </script>
@@ -45,12 +57,7 @@ export default {
   text-align: left;
 }
 .collapsed-menu {
-  text-align: left;
-  span {
-    display: none;
-    width: 0px;
-    transition: width 0.2s ease;
-  }
+  padding: 0;
   i {
     transform: translateX(5px);
     transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;

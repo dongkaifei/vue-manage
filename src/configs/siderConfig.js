@@ -14,7 +14,7 @@ const siderConfig = [
         }]
     }, {
         title: "设置",
-        iconType: "ios-hammer",
+        iconType: "md-build",
         item: [{
             title: "管理员列表",
             pathName: "admins"
