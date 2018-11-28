@@ -1,21 +1,27 @@
 <template>
-    <div class="layout">
-        <Layout>
-            <layoutHeader/>
-            <Layout>
-                <Sider hide-trigger class="layout-sider" collapsible :collapsed-width="60" v-model="isCollapsed">
-                    <layoutSider/>
-                </Sider>
-                <Layout class="layout-right">
-                    <layoutBreadcrumb/>
-                    <Content class="layout-content">
-                        <router-view/>
-                    </Content>
-                </Layout>
-            </Layout>
-            <layoutFooter v-if="false"/>
+  <div class="layout">
+    <Layout>
+      <layoutHeader/>
+      <Layout>
+        <Sider
+          hide-trigger
+          :class="siderClass"
+          collapsible
+          :collapsed-width="40"
+          v-model="isCollapsed"
+        >
+          <layoutSider/>
+        </Sider>
+        <Layout class="layout-right">
+          <layoutBreadcrumb/>
+          <Content class="layout-content">
+            <router-view/>
+          </Content>
         </Layout>
-    </div>
+      </Layout>
+      <layoutFooter v-if="false"/>
+    </Layout>
+  </div>
 </template>
 
 <script>
@@ -33,6 +39,9 @@ export default {
     layoutFooter
   },
   computed: {
+    siderClass() {
+      return ["layout-sider", { "layout-sider-scroll": !this.isCollapsed }];
+    },
     ...mapState(["isCollapsed"])
   }
 };
@@ -49,6 +58,8 @@ export default {
   .layout-sider {
     height: @sider-min-height;
     background: #fff;
+  }
+  .layout-sider-scroll {
     overflow-y: scroll;
   }
   .layout-right {
