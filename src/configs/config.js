@@ -1,3 +1,3 @@
 export const domainConfig = {
-    domain: "http://localhost:7001"
+    domain: "http://localhost:7002"
 }

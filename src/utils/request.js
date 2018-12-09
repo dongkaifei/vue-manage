@@ -13,3 +13,15 @@ export const requestGet = (reqUrl) => {
         }
     })
 }
+
+export const requestPost = (reqUrl, data) => {
+    const url = `${domainConfig.domain}${reqUrl}`;
+    return fetch({ url, method: 'post', params: data }).then(({ res }) => {
+        if (!res) return;
+        if (res.errCode == 0) {
+            return res.data;
+        } else {
+            Message.error(`系统出错：${res.errCode}`);
+        }
+    })
+}
